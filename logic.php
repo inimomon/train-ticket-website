@@ -65,4 +65,45 @@ function update($data) {
     $stmt->bind_param("sssiiii", $nama, $tujuanAwal, $tujuanAkhir, $harga, $jumlah, $total, $id);
     $stmt->execute();
 }
+
+function register($data) {
+    global $koneksi;
+
+    $username = htmlspecialchars($data['username']);
+    $password = htmlspecialchars($data['password']);
+
+    $stmt = $koneksi->prepare("INSERT INTO pemakai (username, password) VALUES (?, ?)");
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+
+    $_SESSION['username'] = $username;
+    $_SESSION['password'] = $password;
+
+    header("location:login.php");
+}
+
+function login($data) {
+    global $koneksi;
+
+    $username = htmlspecialchars($data['username']);
+    $password = htmlspecialchars($data['password']);
+
+    $stmt = $koneksi->prepare("SELECT * FROM pemakai WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if($result->num_rows !== 0 ) {
+        $d = $result->fetch_assoc();
+
+        if($username === $d['username'] && $password === $d['password']) {
+            header("location:index.php");
+        } else {
+            header("location:login.php?error=wrong");
+        }
+    } else {
+        header("location:login.php?error=nodata");
+    }
+
+}
 ?>
