@@ -2,11 +2,6 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = create($_POST);
-
-    if ($result) {
-        header("location:display.php");
-        exit;
-    }
 }
 ?>
 
